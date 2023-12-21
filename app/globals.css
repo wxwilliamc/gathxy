@@ -228,6 +228,10 @@ body {
   .toggle-switch {
     @apply bg-gray-300 !important;
   }
+
+  .gradient-button {
+    @apply bg-gradient-to-r from-rose-600 to-blue-600;
+  }
 }
 
 /* ========================================== CLERK STYLES */
@@ -274,3 +278,5 @@ body {
 .react-datepicker__time-list-item--selected {
   background-color: #624cf5 !important;
 }
+
+
