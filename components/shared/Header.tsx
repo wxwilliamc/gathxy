@@ -27,7 +27,7 @@ const Header = () => {
                 {/* Clerk Setup */}
                 {/* Login */}
                 <SignedOut>
-                    <Button asChild className="rounded-full" size='lg' variant={'secondary'}>
+                    <Button asChild className="rounded-full gradient-button" size='lg'>
                         <Link
                             href='/sign-in'
                         >
