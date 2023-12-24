@@ -57,7 +57,7 @@ const FileUploader = ({ imageUrl, onFieldChange, setFiles }: FileUploaderProps) 
             PNG, JPG, SVG
           </p>
 
-          <Button type='button' className='rounded-full gradient-button'>
+          <Button type='button' className='rounded-full gradient-button hover:animate-pulse'>
             Select from device
           </Button>
         </div>
