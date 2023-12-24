@@ -8,7 +8,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { ICategory } from "@/lib/database/models/category.model"
-import { startTransition, useState } from "react"
+import { startTransition, useEffect, useState } from "react"
 import {
     AlertDialog,
     AlertDialogAction,
@@ -19,9 +19,10 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger,
-  } from "@/components/ui/alert-dialog"
+} from "@/components/ui/alert-dialog"
 import { Input } from "../ui/input"
-  
+import { createCategory, getAllCategories } from "@/lib/actions/category.actions"
+
 
 interface DropdownProps {
     value: string
@@ -34,8 +35,23 @@ const Dropdown = ({ value, onChangeHandler }: DropdownProps) => {
     const [newCategory, setNewCategory] = useState("");
 
     const handleAddCategory = () => {
-
+        createCategory({
+            categoryName: newCategory.trim()
+        })
+            .then((category) => {
+                setCategories((prevState) => [...prevState, category])
+            })
     }
+
+    useEffect(() => {
+        const getCategories = async () => {
+            const categoriesList = await getAllCategories();
+
+            categoriesList && setCategories(categoriesList as ICategory[])
+        }
+
+        getCategories();
+    }, [])
 
     return (
         <>
@@ -56,7 +72,7 @@ const Dropdown = ({ value, onChangeHandler }: DropdownProps) => {
                             <AlertDialogHeader>
                                 <AlertDialogTitle>Add New Category</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                    <Input 
+                                    <Input
                                         type="text"
                                         placeholder="Category Name"
                                         className="input-field mt-3"
