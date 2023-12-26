@@ -38,14 +38,14 @@ const Card = ({ event, hasOrderLink, hidePrice }: CardProps) => {
                         </Link>
                     </div>
 
-                    <div className='absolute right-3 bottom-4 rounded-xl px-4 pt-1.5 transition-all hover:bg-rose-400 bg-rose-200'>
+                    <div className='absolute right-3 bottom-5 rounded-xl px-4 pt-1.5 transition-all hover:bg-rose-400 bg-rose-200'>
                         <DeleteConfirmation eventId={event._id} eventTitle={event.title}/>
                     </div>
                 </>
             )}
 
             {/* Event Preview Card */}
-            <Link href={`/events/${event._id}`} className='flex min-h-[230px] flex-col gap-3 p-5 md:gap-4'>
+            <div className='flex min-h-[230px] flex-col gap-3 p-5 md:gap-4'>
                 {!hidePrice && (
                     <div className='flex gap-2'>
                         <span className='p-semibold-14 rounded-full bg-green-100 px-4 py-1.5 text-green-60'>
@@ -62,9 +62,11 @@ const Card = ({ event, hasOrderLink, hidePrice }: CardProps) => {
                     {formatDateTime(event.startDateTime).dateTime}
                 </p>
 
-                <p className='p-medium-16 md:p-medium-20 line-clamp-2 flex-1 text-black'>
-                    {event.title}
-                </p>
+                <Link href={`/events/${event._id}`}>
+                    <p className='p-medium-16 md:p-medium-20 line-clamp-2 flex-1 text-black'>
+                        {event.title}
+                    </p>
+                </Link>
 
                 <div className='flex-between w-full'>
                     <p className='p-medium-14 md:p-medium-16 text-grey-600'>
@@ -73,13 +75,13 @@ const Card = ({ event, hasOrderLink, hidePrice }: CardProps) => {
 
                     {hasOrderLink && (
                         <Link href={`/orders?eventId=${event._id}`} className='flex gap-2'>
-                            <p className='gradient-button text-white px-2 rounded-full py-1 opacity-80 group-hover:opacity-100 transition'>
+                            <p className='absolute right-20 bottom-5 gradient-button text-white px-2 rounded-full py-1 opacity-80 group-hover:opacity-100 transition'>
                                 Order Details
                             </p>
                         </Link>
                     )}
                 </div>
-            </Link>
+            </div>
 
         </div>
     )
