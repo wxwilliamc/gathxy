@@ -6,11 +6,6 @@ const nextConfig = {
             {
                 protocol: 'https',
                 port: '',
-                hostname: 'i.pinimg.com',
-            },
-            {
-                protocol: 'https',
-                port: '',
                 hostname: 'utfs.io',
             },
         ]
