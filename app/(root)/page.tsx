@@ -1,8 +1,20 @@
+import Collection from "@/components/shared/Collection";
 import { Button } from "@/components/ui/button";
+import { getAllEvents } from "@/lib/actions/event.actions";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function Home() {
+export default async function Home() {
+
+  const events = await getAllEvents({
+    query: '',
+    category: '',
+    page: 1,
+    limit: 6
+  });
+
+  // console.log(events)
+
   return (
     <>
       <section className="bg-primary-50 bg-dotted-pattern bg-contain py-5 md:py-10">
@@ -15,7 +27,7 @@ export default function Home() {
               At Gathxy, we provide the ideal platform for bringing people together to host, connect, and celebrate their events. Whether it's a gathering of friends, a professional meetup, or a special occasion, our platform offers the perfect space to unite and commemorate these moments.
             </p>
 
-            <Button size='lg' asChild className="button w-full sm:w-fit gradient-button">
+            <Button size='lg' asChild className="button w-full sm:w-fit gradient-button opacity-80 hover:opacity-100 transition">
               <Link href='#events'>
                 Explore Now
               </Link>
@@ -41,6 +53,16 @@ export default function Home() {
           {/* Search */}
           {/* Category Filter */}
         </div>
+
+        <Collection 
+          data={events?.data}
+          emptyTitle="No Events Found"
+          emptySubTitle="Come back later"
+          collectionType="All_Events"
+          limit={6}
+          page={1}
+          totalPages={2}
+        />
       </section>
     </>
   )
