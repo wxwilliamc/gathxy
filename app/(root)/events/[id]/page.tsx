@@ -1,3 +1,4 @@
+import CheckoutButton from '@/components/shared/CheckoutButton'
 import Collection from '@/components/shared/Collection'
 import DeleteConfirmation from '@/components/shared/DeleteConfirmation'
 import { getEventById, getRelatedEventsByCategory } from '@/lib/actions/event.actions'
@@ -61,6 +62,9 @@ const EventDetailsPage = async ({ params: { id }, searchParams }: SearchParamPro
             </div>
 
             {/* Checkout Button */}
+            <CheckoutButton 
+              event={event}
+            />
 
 
             <div className='flex flex-col gap-5'>
