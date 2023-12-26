@@ -25,14 +25,19 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Checkbox } from "@/components/ui/checkbox"
 import { useUploadThing } from '@/lib/uploadthing'
 import { useRouter } from "next/navigation"
-import { createEvent } from "@/lib/actions/event.actions"
+import { createEvent, updateEvent } from "@/lib/actions/event.actions"
+import { IEvent } from "@/lib/database/models/event.model"
+import { RouteMatcher } from "next/dist/server/future/route-matchers/route-matcher"
+import Link from "next/link"
 
 interface EventFormProps {
     userId: string
     type: 'Create' | 'Update'
+    eventId?: string
+    eventData?: IEvent
 }
 
-const EventForm = ({ userId, type }: EventFormProps) => {
+const EventForm = ({ userId, type, eventId, eventData }: EventFormProps) => {
 
     // Store Uploaded Image
     const [files, setFiles] = useState<File[]>([]);
@@ -40,7 +45,11 @@ const EventForm = ({ userId, type }: EventFormProps) => {
     const router = useRouter();
 
     // Event Form Default Values
-    const initialEventFormValue = eventDefaultValues;
+    const initialEventFormValue = eventData && type === 'Update' ? {
+        ...eventData,
+        startDateTime: new Date(eventData.startDateTime),
+        endDateTime: new Date(eventData.endDateTime),
+    } : eventDefaultValues;
 
     const form = useForm<EventFormSchemaType>({
         resolver: zodResolver(EventFormSchema),
@@ -51,23 +60,23 @@ const EventForm = ({ userId, type }: EventFormProps) => {
 
         let uploadedImageUrl = values.imageUrl;
 
-        if(files.length > 0){
+        if (files.length > 0) {
             const uploadedImages = await startUpload(files)
 
-            if(!uploadedImages) return;
+            if (!uploadedImages) return;
 
             uploadedImageUrl = uploadedImages[0].url
         }
 
-        if(type === 'Create'){
+        if (type === 'Create') {
             try {
                 const newEvent = await createEvent({
-                    event: {...values, imageUrl: uploadedImageUrl},
+                    event: { ...values, imageUrl: uploadedImageUrl },
                     userId,
                     path: '/profile'
                 });
 
-                if(newEvent){
+                if (newEvent) {
                     form.reset();
                     router.push(`/events/${newEvent._id}`)
                 }
@@ -75,10 +84,38 @@ const EventForm = ({ userId, type }: EventFormProps) => {
                 console.log(error)
             }
         }
+
+        if (type === 'Update') {
+            try {
+                if (!eventId) {
+                    router.back();
+                    return;
+                }
+
+                const updateExistingEvent = await updateEvent({
+                    userId,
+                    event: { ...values, imageUrl: uploadedImageUrl, _id: eventId },
+                    path: `/event/${eventId}`,
+                })
+
+                if (updateExistingEvent) {
+                    form.reset();
+                    router.push(`/events/${updateExistingEvent._id}`);
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 
     return (
         <div>
+            <Button className="gradient-button hover:scale-105 transition hover:shadow-md opacity-80 hover:opacity-100 rounded-xl -mt-20 mb-8" asChild>
+                <Link href='/'>
+                    Go Back
+                </Link>
+            </Button>
+
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5">
 
@@ -328,7 +365,7 @@ const EventForm = ({ userId, type }: EventFormProps) => {
                     </div>
 
                     <Button type="submit" disabled={form.formState.isSubmitting} className="gradient-button button col-span-2 w-full hover:animate-pulse">
-                        {form.formState.isSubmitting ? "Loading..." : `${type} Event` }
+                        {form.formState.isSubmitting ? "Loading..." : `${type} Event`}
                     </Button>
                 </form>
             </Form>
