@@ -60,6 +60,10 @@ const populateEvent = async (query: any) => {
     });
 };
 
+const getCategoryByName = async (name: string) => {
+  return Category.findOne({ name: { $regex: name, $options: 'i' } })
+}
+
 // Get The Only Event
 export const getEventById = async (eventId: string) => {
   try {
@@ -88,7 +92,13 @@ export const getAllEvents = async ({
     await connectToDatabase();
 
     // Search Filter (query, category)
-    const conditions = {};
+    const titleCondition = query ? { title: { $regex: query, $options: 'i' } } : {}
+    const categoryCondition = category ? await getCategoryByName(category) : null
+    const conditions = {
+      $and: [titleCondition, categoryCondition ? { category: categoryCondition._id } : {}],
+    }
+
+    const skipAmount = (Number(page) - 1) * limit
 
     // Find The Events Based On Search Filter
     const eventsQuery = Event.find(conditions)
